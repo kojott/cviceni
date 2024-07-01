@@ -4,9 +4,15 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Update apt-get and install build-essential and ffmpeg
+# Update apt-get and install build-essential, ffmpeg, and additional dependencies for pygame
 RUN apt-get update && apt-get install -y \
-    build-essential
+    build-essential \
+    ffmpeg \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install any needed packages specified in requirements.txt
 COPY requirements.txt /usr/src/app
