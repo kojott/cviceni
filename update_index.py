@@ -37,5 +37,5 @@ def update_html_file(file_path):
         file.write(html_content)
 
 # Specify the path to your HTML file
-file_path = '/usr/local/lib/python3.9/site-packages/streamlit/static/index.html'
+file_path = '/usr/local/lib/python3.12/site-packages/streamlit/static/index.html'
 update_html_file(file_path)
