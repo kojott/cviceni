@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /usr/src/app
 COPY . /usr/src/app
-COPY ./logo.png /usr/local/lib/python3.9/site-packages/streamlit/static/favicon.png
+COPY ./logo.png /usr/local/lib/python3.12/site-packages/streamlit/static/favicon.png
 
 # Update the index
 RUN python update_index.py
