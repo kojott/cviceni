@@ -1,6 +1,13 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import time
+import pygame
+
+# Initialize pygame mixer
+pygame.mixer.init()
+
+# Load beep sound
+beep_sound = pygame.mixer.Sound('beep.wav')
 
 # Define the workout plan for each day in Czech
 workout_plan_czech = [
@@ -49,6 +56,9 @@ def next_exercise():
         st.session_state.exercise_index += 1
         st.session_state.time_left = workout_exercises[st.session_state.exercise_index][1]
         st.session_state.running = True
+        
+        # Play beep sound
+        beep_sound.play()
     else:
         st.session_state.running = False
 
