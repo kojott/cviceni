@@ -2,15 +2,171 @@ import streamlit as st
 from datetime import datetime, timedelta
 import time
 
+st.sidebar.title("Nastavení")
+if 'sets_count' not in st.session_state:
+    st.session_state.sets_count = 3
+
+sets_count = st.sidebar.slider(
+    "Počet opakování každé série",
+    min_value=1,
+    max_value=10,
+    value=st.session_state.sets_count,
+)
+
+if sets_count != st.session_state.sets_count:
+    st.session_state.sets_count = sets_count
+    if 'exercise_index' in st.session_state:
+        st.session_state.exercise_index = 0
+        st.session_state.running = False
+
 # Define the workout plan for each day in Czech
 workout_plan_czech = [
-    ("Celé tělo", [("Rozcvička", 120, "Pochod na místě pro zvýšení tepové frekvence")] + [("Kliky", 30, "Lehněte si na břicho, ruce položte vedle ramen a zvedejte tělo nahoru a dolů"), ("Dřepy", 30, "Postavte se, nohy na šířku ramen, a snižujte se, jako byste si chtěli sednout na židli"), ("Plank", 30, "Držení těla ve vzpěru na předloktích a špičkách nohou pro posílení středu těla"), ("Odpočinek", 30, "")] * 3),
-    ("Střed těla a Kardio", [("Rozcvička", 120, "Běh na místě")] + [("Horolezci", 30, "Ve vzporu střídavě přitahujte kolena k hrudníku"), ("Zvedání nohou", 30, "Lehněte si na záda, ruce pod hýždě a zvedejte natažené nohy směrem vzhůru"), ("Skákající panák", 30, "Skákací cvik na místě, při kterém se rozpažujete a rozkročujete"), ("Odpočinek", 30, "")] * 3),
-    ("Spodní část těla", [("Rozcvička", 120, "Mávání nohou a výpady s vlastní vahou")] + [("Dřepy", 30, "Postavte se, nohy na šířku ramen, a snižujte se, jako byste si chtěli sednout na židli"), ("Výpady", 30, "Střídavě kročte jednou nohou vpřed a pokrčte kolena, dokud zadní koleno není těsně nad zemí"), ("Sed u zdi", 30, "Opřete se zády o stěnu, snižte se do dřepu a držte tuto pozici"), ("Odpočinek", 30, "")] * 3),
-    ("Horní část těla a střed těla", [("Rozcvička", 120, "Kroužení pažemi a stínový box")] + [("Kliky", 30, "Lehněte si na břicho, ruce položte vedle ramen a zvedejte tělo nahoru a dolů"), ("Tricepsové dipy", 30, "Položte ruce na okraj židle za sebou, nohy natáhněte před sebe a snižujte tělo dolů a nahoru"), ("Jízdní kolo", 30, "Lehněte si na záda, ruce za hlavu a střídavě přitahujte kolena k protilehlým loktům"), ("Odpočinek", 30, "")] * 3),
-    ("Celé tělo", [("Rozcvička", 120, "Lehký strečink a kroužení krkem")] + [("Worm", 30, "Z pozice ve stoje se ohýbejte, až se dotknete rukama země, a poté ručkujte dopředu do planku"), ("Plank to push-up", 30, "Z pozice planku se střídavě zvedejte do pozice kliku a vracejte se zpět"), ("Vysoká kolena", 30, "Běh na místě s vysokým zvedáním kolen"), ("Odpočinek", 30, "")] * 3),
-    ("Strečink a regenerace", [("Strečink", 600, "10 minut různých strečinkových cviků zaměřených na všechny hlavní svalové skupiny")]),
-    ("Smíšené Kardio", [("Rozcvička", 120, "Vysoká kolena a kopání do zadku")] + [("Burpees", 30, "Z pozice ve stoje skočte do dřepu, poté do planku, udělejte klik, a skočte zpět do stoje s výskokem"), ("Boční výpady", 30, "Střídavě vykračujte do strany a pokrčujte koleno, druhá noha zůstává natažená"), ("Rychlé nohy", 30, "Rychlé střídání nohou na místě pro zvýšení tepové frekvence"), ("Odpočinek", 30, "")] * 3)
+    (
+        "Celé tělo",
+        [
+            ("Rozcvička", 120, "Pochod na místě pro zvýšení tepové frekvence")
+        ]
+        + [
+            (
+                "Kliky",
+                30,
+                "Lehněte si na břicho, ruce položte vedle ramen a zvedejte tělo nahoru a dolů",
+            ),
+            (
+                "Dřepy",
+                30,
+                "Postavte se, nohy na šířku ramen, a snižujte se, jako byste si chtěli sednout na židli",
+            ),
+            (
+                "Plank",
+                30,
+                "Držení těla ve vzpěru na předloktích a špičkách nohou pro posílení středu těla",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
+    (
+        "Střed těla a Kardio",
+        [("Rozcvička", 120, "Běh na místě")] + [
+            (
+                "Horolezci",
+                30,
+                "Ve vzporu střídavě přitahujte kolena k hrudníku",
+            ),
+            (
+                "Zvedání nohou",
+                30,
+                "Lehněte si na záda, ruce pod hýždě a zvedejte natažené nohy směrem vzhůru",
+            ),
+            (
+                "Skákající panák",
+                30,
+                "Skákací cvik na místě, při kterém se rozpažujete a rozkročujete",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
+    (
+        "Spodní část těla",
+        [
+            ("Rozcvička", 120, "Mávání nohou a výpady s vlastní vahou")
+        ]
+        + [
+            (
+                "Dřepy",
+                30,
+                "Postavte se, nohy na šířku ramen, a snižujte se, jako byste si chtěli sednout na židli",
+            ),
+            (
+                "Výpady",
+                30,
+                "Střídavě kročte jednou nohou vpřed a pokrčte kolena, dokud zadní koleno není těsně nad zemí",
+            ),
+            (
+                "Sed u zdi",
+                30,
+                "Opřete se zády o stěnu, snižte se do dřepu a držte tuto pozici",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
+    (
+        "Horní část těla a střed těla",
+        [("Rozcvička", 120, "Kroužení pažemi a stínový box")] + [
+            (
+                "Kliky",
+                30,
+                "Lehněte si na břicho, ruce položte vedle ramen a zvedejte tělo nahoru a dolů",
+            ),
+            (
+                "Tricepsové dipy",
+                30,
+                "Položte ruce na okraj židle za sebou, nohy natáhněte před sebe a snižujte tělo dolů a nahoru",
+            ),
+            (
+                "Jízdní kolo",
+                30,
+                "Lehněte si na záda, ruce za hlavu a střídavě přitahujte kolena k protilehlým loktům",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
+    (
+        "Celé tělo",
+        [("Rozcvička", 120, "Lehký strečink a kroužení krkem")] + [
+            (
+                "Worm",
+                30,
+                "Z pozice ve stoje se ohýbejte, až se dotknete rukama země, a poté ručkujte dopředu do planku",
+            ),
+            (
+                "Plank to push-up",
+                30,
+                "Z pozice planku se střídavě zvedejte do pozice kliku a vracejte se zpět",
+            ),
+            (
+                "Vysoká kolena",
+                30,
+                "Běh na místě s vysokým zvedáním kolen",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
+    (
+        "Strečink a regenerace",
+        [(
+            "Strečink",
+            600,
+            "10 minut různých strečinkových cviků zaměřených na všechny hlavní svalové skupiny",
+        )],
+    ),
+    (
+        "Smíšené Kardio",
+        [("Rozcvička", 120, "Vysoká kolena a kopání do zadku")] + [
+            (
+                "Burpees",
+                30,
+                "Z pozice ve stoje skočte do dřepu, poté do planku, udělejte klik, a skočte zpět do stoje s výskokem",
+            ),
+            (
+                "Boční výpady",
+                30,
+                "Střídavě vykračujte do strany a pokrčujte koleno, druhá noha zůstává natažená",
+            ),
+            (
+                "Rychlé nohy",
+                30,
+                "Rychlé střídání nohou na místě pro zvýšení tepové frekvence",
+            ),
+            ("Odpočinek", 30, ""),
+        ]
+        * sets_count,
+    ),
 ]
 
 # Get current date
@@ -24,11 +180,12 @@ workout_name, workout_exercises = workout_today
 total_workout_time = sum(exercise_time for _, exercise_time, _ in workout_exercises)
 
 # Define timer states
-if 'exercise_index' not in st.session_state:
+if 'exercise_index' not in st.session_state or st.session_state.get('current_sets') != sets_count:
     st.session_state.exercise_index = 0
     st.session_state.time_left = workout_exercises[0][1]
     st.session_state.running = False
     st.session_state.total_time_left = total_workout_time
+    st.session_state.current_sets = sets_count
 
 # Timer controls
 def start_timer():
