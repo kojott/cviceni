@@ -2,6 +2,33 @@ import streamlit as st
 from datetime import datetime, timedelta
 import time
 
+st.set_page_config(page_title="Denní Cvičení", page_icon="💪", layout="wide")
+
+CUSTOM_CSS = """
+<style>
+body {
+    font-family: "Helvetica", sans-serif;
+}
+h1, h2, h3, h4, h5 {
+    color: #FF4B4B;
+}
+.stButton button {
+    padding: 0.75em 1em;
+    font-size: 1rem;
+}
+div[data-testid="stProgress"] div[role="progressbar"] {
+    height: 1.5rem;
+}
+@media (max-width: 768px) {
+    .stButton button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+"""
+st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+
 # Define the workout plan for each day in Czech
 workout_plan_czech = [
     ("Celé tělo", [("Rozcvička", 120, "Pochod na místě pro zvýšení tepové frekvence")] + [("Kliky", 30, "Lehněte si na břicho, ruce položte vedle ramen a zvedejte tělo nahoru a dolů"), ("Dřepy", 30, "Postavte se, nohy na šířku ramen, a snižujte se, jako byste si chtěli sednout na židli"), ("Plank", 30, "Držení těla ve vzpěru na předloktích a špičkách nohou pro posílení středu těla"), ("Odpočinek", 30, "")] * 3),
@@ -66,15 +93,15 @@ def prev_exercise():
 # Display workout for today
 st.title(f"Denní Cvičení: {workout_name}")
 
-# Display all exercises
-st.subheader("Seznam dnešních cviků")
-for i, (exercise_name, exercise_time, exercise_desc) in enumerate(workout_exercises):
-    if i == st.session_state.exercise_index:
-        st.write(f"<h4>➡️ {i + 1}. {exercise_name} - {exercise_time} sekund</h4>", unsafe_allow_html=True)
-        st.write(f"**{exercise_desc}**")
-    else:
-        st.write(f"<h5>{i + 1}. {exercise_name} - {exercise_time} sekund</h5>", unsafe_allow_html=True)
-        st.write(f"{exercise_desc}")
+# Display all exercises in an expandable section
+with st.expander("Seznam dnešních cviků"):
+    for i, (exercise_name, exercise_time, exercise_desc) in enumerate(workout_exercises):
+        if i == st.session_state.exercise_index:
+            st.write(f"<h4>➡️ {i + 1}. {exercise_name} - {exercise_time} sekund</h4>", unsafe_allow_html=True)
+            st.write(f"**{exercise_desc}**")
+        else:
+            st.write(f"<h5>{i + 1}. {exercise_name} - {exercise_time} sekund</h5>", unsafe_allow_html=True)
+            st.write(f"{exercise_desc}")
 
 # Timer display
 exercise_name, exercise_time, exercise_desc = workout_exercises[st.session_state.exercise_index]

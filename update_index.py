@@ -27,6 +27,7 @@ def update_html_file(file_path):
 <meta name="msapplication-TileImage" content="https://cviceni.coininspector.pro/app/static/logo.png">
 <meta name="msapplication-TileColor" content="#222222">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 """
 
     # Insert the new content into the head section
